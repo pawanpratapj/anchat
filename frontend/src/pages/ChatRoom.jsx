@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { socket } from '../socket';
 import OnlineUsers from '../components/OnlineUsers';
+import SendIcon from '../assets/SendIcon';
 
 const ChatRoom = ({ username }) => {
   const [inputMessage, setInputMessage] = useState("");
@@ -101,7 +102,7 @@ const ChatRoom = ({ username }) => {
 
         <div className='flex items-center md:p-1 p-2 '>
           <input type="text" value={inputMessage} onKeyDown={(e) => { if (e.key == "Enter") { handleSendMessage() }; handleKeyDown(e.key) }} onChange={(e) => setInputMessage(e.target.value)} placeholder='Enter message' className='flex-1 md:px-3 pl-4 border-2 md:py-1.5 py-2 md:rounded-l-xl rounded-l-3xl' />
-          <button className='bg-green-300 h-full px-4 font-bold md:rounded-r-xl border-2 rounded-r-3xl border-l-0' onClick={handleSendMessage}>Send</button>
+          <button className='bg-green-300 h-full px-2 font-bold md:rounded-r-xl border-2 rounded-r-3xl  md:rounded-l-none border-l-0' onClick={handleSendMessage}><SendIcon /></button>
         </div>
       </div>
     </div>

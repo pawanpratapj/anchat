@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
   socket.on("typing_on", (user) => {
     typingUsers = [...new Set([...typingUsers, user])]
     socket.broadcast.emit("typinguser", typingUsers);
-    console.log("user ", user, "typing on")
+    console.log("user ", user, "typing on");
   })
 
   socket.on("typing_off", (user) => {

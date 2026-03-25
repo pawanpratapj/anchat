@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { socket } from '../socket';
 import OnlineUsers from '../components/OnlineUsers';
 import SendIcon from '../assets/SendIcon';
+import { isOnlyEmojis } from '../components/emojiCheck';
 
 const ChatRoom = ({ username }) => {
   const [inputMessage, setInputMessage] = useState("");
@@ -35,7 +36,6 @@ const ChatRoom = ({ username }) => {
     );
     socket.emit("message", { message: inputMessage, sender: username });
     setInputMessage("");
-    console.log(messageList)
   }
 
   useEffect(() => {
@@ -57,13 +57,11 @@ const ChatRoom = ({ username }) => {
           return [...prev, { message: [msg.message], sender: msg.sender }]
         }
       })
-      console.log(msg);
 
     }
 
     const addTypingUser = (users) => {
-      setUsersTyping(users);
-      console.log(users);
+      setUsersTyping(users.filter(elem => elem != username));
     }
 
 
@@ -89,8 +87,8 @@ const ChatRoom = ({ username }) => {
 
   return (
     <div className='fullScreen grid place-items-center bg-yellow-100 relative md:px-3 md:py-7'>
-      <div className='absolute hover:bg-black/5 right-2 top-2 px-3 py-1 rounded-md hidden md:inline'>@{username}</div>
-      <div className='bg-white md:border-2 w-full md:max-w-xl  border-black rounded-2xl h-full flex flex-col'>
+      <div className='absolute bg-white hover:bg-black/5 right-2 top-2 px-3 py-1 rounded-md hidden md:inline'>@{username}</div>
+      <div className='bg-white  md:border-2 w-full md:max-w-xl  border-black rounded-2xl h-full flex flex-col'>
         <div className='flex items-center border-b-2 justify-between h-10 px-3'>
           <h1 className='font-bold text-xl'>Chat Room</h1>
           <OnlineUsers />
@@ -110,19 +108,23 @@ const ChatRoom = ({ username }) => {
 }
 
 const RecievedMessage = ({ sender, messagesList }) => {
+  const time = new Date().toLocaleString();
+
   return (
     <div className="messageParent max-w-4/5 mb-2">
       <p className='text-[12px] mb-1'>@{sender}</p>
-      {messagesList.map((elem, index) => <div className={'border-2 mb-0.5 bg-red-100 w-fit px-3 py-1 rounded-r-2xl ' + (index == 0 ? 'rounded-tl-2xl' : '') + (index == messagesList.length - 1 ? ' rounded-bl-2xl' : '')}>{elem}</div>)}
+      {messagesList.map((elem, index) => (isOnlyEmojis(elem.trim()) ? <div className='text-4xl my-0.5'>{elem}</div> : <div title={time} className={'border-2 mb-0.5 bg-red-100 w-fit px-3 py-1 rounded-r-2xl ' + (index == 0 ? 'rounded-tl-2xl' : '') + (index == messagesList.length - 1 ? ' rounded-bl-2xl' : '')}>{elem}</div>))}
     </div>
   )
 }
 
 const SentMessage = ({ sender, messagesList }) => {
+  const time = new Date().toLocaleString();
   return (
     <div className='w-full flex justify-end'>
       <div className="messageParent max-w-4/5 mb-2 flex flex-col items-end-safe">
-        {messagesList.map((elem, index) => <div key={elem + index} className={' border-2 mb-0.5 bg-blue-100 w-fit px-3 py-1 rounded-l-2xl ' + (index == 0 ? 'rounded-tr-2xl' : '') + (index == messagesList.length - 1 ? ' rounded-br-2xl' : '')}>{elem}</div>)}
+
+        {messagesList.map((elem, index) => (isOnlyEmojis(elem.trim()) ? <div className='text-4xl my-0.5'>{elem}</div> : <div key={elem + index} title={time} className={' border-2 mb-0.5 bg-blue-100 w-fit px-3 py-1 rounded-l-2xl ' + (index == 0 ? 'rounded-tr-2xl' : '') + (index == messagesList.length - 1 ? ' rounded-br-2xl' : '')}>{elem}</div>))}
       </div>
     </div>
   )
